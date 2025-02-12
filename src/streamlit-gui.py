@@ -39,7 +39,7 @@ def extract_channels_from_image(image):
         return []
 
 def create_gui():
-    st.set_page_config(layout="wide")  # Improves screen space usage
+    st.set_page_config(layout="wide")
     
     # Title and tabs
     st.title("Reach & Frequency Calculator")
@@ -55,7 +55,7 @@ def create_gui():
                 "Total Universe", 
                 value=1_000_000,
                 min_value=1_000_000,
-                format="%d"  # Ensures comma formatting
+                format="%d"
             )
         
         with col2:
@@ -83,7 +83,7 @@ def create_gui():
             if extracted_data:
                 st.success(f"Extracted {len(extracted_data)} entries from image.")
 
-        # Channel Distribution (Moved Here)
+        # Channel Distribution
         st.header("Channel Impressions")
         
         # Default channels
@@ -105,43 +105,31 @@ def create_gui():
         for channel, impressions in extracted_data:
             default_channels[channel] = impressions
 
-        # Convert to DataFrame and keep it editable
         df = pd.DataFrame(list(default_channels.items()), columns=['Channel', 'Impressions'])
         
         edited_df = st.data_editor(
             df,
             key="channel_data",
-            disabled=["Channel"],  # Lock channel names
+            disabled=["Channel"],
             hide_index=True
         )
 
         # Calculate Total Impressions dynamically
         total_impressions = edited_df["Impressions"].sum()
 
-        # Display Total Impressions (Now Auto-Calculated)
+        # Display Total Impressions
         st.metric("Total Impressions", f"{total_impressions:,}")
 
     with tab2:
-        # Results Dashboard (only show when calculate button is clicked)
         if st.button("Calculate Results"):
             calculator = ReachFrequencyCalculator(
                 total_universe=total_universe,
-                total_impressions=total_impressions,  # Now dynamically calculated
+                total_impressions=total_impressions,
                 max_reach_percent=max_reach_percent,
                 global_overlap_factor=global_overlap_factor,
                 distributed_impressions={
                     channel: int(impressions) 
                     for channel, impressions in zip(edited_df['Channel'], edited_df['Impressions'])
-                },
-                channel_penetration={
-                    "OOH": 0.08, "TV": 0.782, "CTV/FEP": 0.75, "YouTube": 0.91,
-                    "Console": 0.39, "Creators": 0.17, "Music Streaming": 0.686,
-                    "Programmatic": 0.941, "Display": 0.941, "Social": 0.913, "Search": 0.65
-                },
-                efficiency_factors={
-                    "OOH": 0.5, "TV": 0.8, "CTV/FEP": 0.8, "YouTube": 0.8,
-                    "Console": 0.9, "Creators": 0.85, "Music Streaming": 0.75,
-                    "Programmatic": 0.35, "Display": 0.6, "Social": 0.6, "Search": 0.7
                 }
             )
             
@@ -156,7 +144,6 @@ def create_gui():
                 for channel, contrib in results['channel_contributions'].items()
             ])
             
-            # Ensure "Contribution %" is numeric before applying formatting
             contrib_df["Contribution %"] = contrib_df["Contribution %"].str.replace('%', '').astype(float)
             st.dataframe(contrib_df.style.format({"Contribution %": "{:,.1f}%"}), hide_index=True)
             
@@ -166,21 +153,9 @@ def create_gui():
             with col1:
                 st.metric("Final Reach %", f"{results['final_reach_percent']:.1f}%")
             with col2:
-                st.metric("Final Reach (Individuals)", f"{results['final_reach']:,}")  # Adds commas
+                st.metric("Final Reach (Individuals)", f"{results['final_reach']:,}")
             with col3:
                 st.metric("Average Frequency", f"{results['average_frequency']:.1f}")
             
-            # Effective reach
-            st.subheader("Effective Reach")
-            effective_df = pd.DataFrame([
-                {"Frequency": freq, "Reach %": f"{reach:.1f}%"}
-                for freq, reach in results['effective_reach'].items()
-            ])
-            
-            # Ensure "Reach %" is numeric before applying formatting
-            effective_df["Reach %"] = effective_df["Reach %"].str.replace('%', '').astype(float)
-            
-            st.dataframe(effective_df.style.format({"Reach %": "{:,.1f}%"}), hide_index=True)
-
 if __name__ == "__main__":
     create_gui()
