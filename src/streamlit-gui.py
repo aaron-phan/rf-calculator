@@ -14,7 +14,7 @@ def create_gui():
             "Total Universe", 
             value=1_000_000,  # Default to 1M audience
             min_value=1_000_000,
-            format="%d"
+            format="%d"  # Ensures comma-separated formatting
         )
         
         total_impressions = st.number_input(
