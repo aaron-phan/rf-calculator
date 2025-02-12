@@ -7,7 +7,7 @@ def create_gui():
     
     # Title and tabs
     st.title("Reach & Frequency Calculator")
-    tab1, tab2, tab3 = st.tabs(["Input Parameters", "Channel Distribution", "Results Dashboard"])
+    tab1, tab2 = st.tabs(["Input Parameters & Channel Distribution", "Results Dashboard"])
     
     with tab1:
         # Basic Inputs
@@ -20,13 +20,6 @@ def create_gui():
                 value=1_000_000,
                 min_value=1_000_000,
                 format="%d"  # Ensures comma formatting
-            )
-            
-            total_impressions = st.number_input(
-                "Total Impressions",
-                value=10_000,
-                min_value=10_000,
-                format="%d"
             )
         
         with col2:
@@ -43,8 +36,7 @@ def create_gui():
                 max_value=0.6
             )
 
-    with tab2:
-        # Channel Distribution
+        # Channel Distribution (Moved Here)
         st.header("Channel Impressions")
         
         default_channels = {
@@ -69,21 +61,25 @@ def create_gui():
             disabled=["Channel"],  # Lock channel names
             hide_index=True
         )
-        
-        distributed_impressions = {
-            channel: int(impressions) 
-            for channel, impressions in zip(edited_df['Channel'], edited_df['Impressions'])
-        }
-    
-    with tab3:
+
+        # Calculate Total Impressions dynamically
+        total_impressions = edited_df["Impressions"].sum()
+
+        # Display Total Impressions (Now Auto-Calculated)
+        st.metric("Total Impressions", f"{total_impressions:,}")
+
+    with tab2:
         # Results Dashboard (only show when calculate button is clicked)
         if st.button("Calculate Results"):
             calculator = ReachFrequencyCalculator(
                 total_universe=total_universe,
-                total_impressions=total_impressions,
+                total_impressions=total_impressions,  # Now dynamically calculated
                 max_reach_percent=max_reach_percent,
                 global_overlap_factor=global_overlap_factor,
-                distributed_impressions=distributed_impressions,
+                distributed_impressions={
+                    channel: int(impressions) 
+                    for channel, impressions in zip(edited_df['Channel'], edited_df['Impressions'])
+                },
                 channel_penetration={
                     "OOH": 0.08, "TV": 0.782, "CTV/FEP": 0.75, "YouTube": 0.91,
                     "Console": 0.39, "Creators": 0.17, "Music Streaming": 0.686,
