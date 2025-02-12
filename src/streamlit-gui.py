@@ -76,54 +76,58 @@ def create_gui():
         }
     
     with tab3:
-    if st.button("Calculate Results"):
-        calculator = ReachFrequencyCalculator(
-            total_universe=total_universe,
-            total_impressions=total_impressions,
-            max_reach_percent=max_reach_percent,
-            global_overlap_factor=global_overlap_factor,
-            distributed_impressions=distributed_impressions,
-            channel_penetration={
-                "OOH": 0.08, "TV": 0.782, "CTV/FEP": 0.75, "YouTube": 0.91,
-                "Console": 0.39, "Creators": 0.17, "Music Streaming": 0.686,
-                "Programmatic": 0.941, "Display": 0.941, "Social": 0.913, "Search": 0.65
-            },
-            efficiency_factors={
-                "OOH": 0.5, "TV": 0.8, "CTV/FEP": 0.8, "YouTube": 0.8,
-                "Console": 0.9, "Creators": 0.85, "Music Streaming": 0.75,
-                "Programmatic": 0.35, "Display": 0.6, "Social": 0.6, "Search": 0.7
-            }
-        )
-        
-        results = calculator.run_all_calculations()
-        
-        st.header("Results")
-        
-        # Channel contributions
-        st.subheader("Channel Contributions")
-        contrib_df = pd.DataFrame([
-            {"Channel": channel, "Contribution %": f"{contrib:.1f}%"}
-            for channel, contrib in results['channel_contributions'].items()
-        ])
-        
-        # Fix formatting error by ensuring numeric values
-        contrib_df["Contribution %"] = contrib_df["Contribution %"].str.replace('%', '').astype(float)
-        st.dataframe(contrib_df.style.format({"Contribution %": "{:,.1f}%"}), hide_index=True)
-        
-        # Main metrics
-        st.subheader("Reach Metrics")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Final Reach %", f"{results['final_reach_percent']:.1f}%")
-        with col2:
-            st.metric("Final Reach (Individuals)", f"{results['final_reach']:,}")  # Adds commas
-        with col3:
-            st.metric("Average Frequency", f"{results['average_frequency']:.1f}")
-        
-        # Effective reach
-        st.subheader("Effective Reach")
-        effective_df = pd.DataFrame([
-            {"Frequency": freq, "Reach %": f"{reach:.1f}%"}
-            for freq, reach in results['effective_reach'].items()
-        ])
-        st.dataframe(effective_df.style.format({"Reach %": "{:,.1f}%"}), hide_index=True)
+        # Results Dashboard (only show when calculate button is clicked)
+        if st.button("Calculate Results"):
+            calculator = ReachFrequencyCalculator(
+                total_universe=total_universe,
+                total_impressions=total_impressions,
+                max_reach_percent=max_reach_percent,
+                global_overlap_factor=global_overlap_factor,
+                distributed_impressions=distributed_impressions,
+                channel_penetration={
+                    "OOH": 0.08, "TV": 0.782, "CTV/FEP": 0.75, "YouTube": 0.91,
+                    "Console": 0.39, "Creators": 0.17, "Music Streaming": 0.686,
+                    "Programmatic": 0.941, "Display": 0.941, "Social": 0.913, "Search": 0.65
+                },
+                efficiency_factors={
+                    "OOH": 0.5, "TV": 0.8, "CTV/FEP": 0.8, "YouTube": 0.8,
+                    "Console": 0.9, "Creators": 0.85, "Music Streaming": 0.75,
+                    "Programmatic": 0.35, "Display": 0.6, "Social": 0.6, "Search": 0.7
+                }
+            )
+            
+            results = calculator.run_all_calculations()
+            
+            st.header("Results")
+            
+            # Channel contributions
+            st.subheader("Channel Contributions")
+            contrib_df = pd.DataFrame([
+                {"Channel": channel, "Contribution %": f"{contrib:.1f}%"}
+                for channel, contrib in results['channel_contributions'].items()
+            ])
+            
+            # Fix formatting error by ensuring numeric values before applying format
+            contrib_df["Contribution %"] = contrib_df["Contribution %"].str.replace('%', '').astype(float)
+            st.dataframe(contrib_df.style.format({"Contribution %": "{:,.1f}%"}), hide_index=True)
+            
+            # Main metrics
+            st.subheader("Reach Metrics")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Final Reach %", f"{results['final_reach_percent']:.1f}%")
+            with col2:
+                st.metric("Final Reach (Individuals)", f"{results['final_reach']:,}")  # Adds commas
+            with col3:
+                st.metric("Average Frequency", f"{results['average_frequency']:.1f}")
+            
+            # Effective reach
+            st.subheader("Effective Reach")
+            effective_df = pd.DataFrame([
+                {"Frequency": freq, "Reach %": f"{reach:.1f}%"}
+                for freq, reach in results['effective_reach'].items()
+            ])
+            st.dataframe(effective_df.style.format({"Reach %": "{:,.1f}%"}), hide_index=True)
+
+if __name__ == "__main__":
+    create_gui()
