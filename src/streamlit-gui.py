@@ -57,10 +57,7 @@ def create_gui():
     }
     
     # Convert to DataFrame for editing
-    df = pd.DataFrame(
-        list(default_channels.items()),
-        columns=['Channel', 'Impressions']
-    )
+    df = pd.DataFrame(list(default_channels.items()), columns=['Channel', 'Impressions'])
     
     # Editable table for channel impressions
     edited_df = st.data_editor(
@@ -78,32 +75,16 @@ def create_gui():
     
     # Channel penetration values
     channel_penetration = {
-        "OOH": 0.08,
-        "TV": 0.782,
-        "CTV/FEP": 0.75,
-        "YouTube": 0.91,
-        "Console": 0.39,
-        "Creators": 0.17,
-        "Music Streaming": 0.686,
-        "Programmatic": 0.941,
-        "Display": 0.941,
-        "Social": 0.913,
-        "Search": 0.65
+        "OOH": 0.08, "TV": 0.782, "CTV/FEP": 0.75, "YouTube": 0.91,
+        "Console": 0.39, "Creators": 0.17, "Music Streaming": 0.686,
+        "Programmatic": 0.941, "Display": 0.941, "Social": 0.913, "Search": 0.65
     }
 
     # Efficiency factors for each channel
     efficiency_factors = {
-        "OOH": 0.5,
-        "TV": 0.8,
-        "CTV/FEP": 0.8,
-        "YouTube": 0.8,
-        "Console": 0.9,
-        "Creators": 0.85,
-        "Music Streaming": 0.75,
-        "Programmatic": 0.35,
-        "Display": 0.6,
-        "Social": 0.6,
-        "Search": 0.7
+        "OOH": 0.5, "TV": 0.8, "CTV/FEP": 0.8, "YouTube": 0.8,
+        "Console": 0.9, "Creators": 0.85, "Music Streaming": 0.75,
+        "Programmatic": 0.35, "Display": 0.6, "Social": 0.6, "Search": 0.7
     }
     
     # Calculate button to trigger calculations
