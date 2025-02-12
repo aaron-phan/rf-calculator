@@ -15,25 +15,27 @@ def create_gui():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.card("Basic Parameters", """
-                # Your existing number inputs here
+            with st.container():
+                st.markdown("### Basic Parameters")
+                
                 total_universe = st.number_input(
                     "Total Universe 👥", 
                     value=1000000,
                     min_value=1000000,
                     help="The total addressable audience size"
                 )
-                
+
                 total_impressions = st.number_input(
                     "Total Impressions 👁️",
                     value=10000,
                     min_value=10000,
                     help="Total number of impressions across all channels"
                 )
-            """)
             
         with col2:
-            st.card("Advanced Settings", """
+            with st.container():
+                st.markdown("### Advanced Settings")
+                
                 max_reach_percent = st.number_input(
                     "Maximum Reach % 📊",
                     value=98.2,
@@ -49,7 +51,6 @@ def create_gui():
                     max_value=0.6,
                     help="Factor determining audience overlap between channels"
                 )
-            """)
     
     with tab2:
         # Channel Distribution
@@ -57,7 +58,13 @@ def create_gui():
         col1, col2 = st.columns([3, 2])
         
         with col1:
-            # Your existing channel inputs with improved styling
+            # Ensure default_channels is defined
+            default_channels = {
+                "TV": 5000,
+                "Social Media": 3000,
+                "Search Ads": 2000
+            }
+            
             df = pd.DataFrame(
                 [[channel, impressions] for channel, impressions in default_channels.items()],
                 columns=['Channel', 'Impressions']
@@ -123,8 +130,14 @@ def create_gui():
 
     # Calculate button at the bottom
     if st.button("Calculate Results"):
-        # Your existing calculation code here
-        calculator = ReachFrequencyCalculator(...)
+        # Placeholder for actual calculation logic
+        calculator = ReachFrequencyCalculator(
+            total_universe=total_universe,
+            total_impressions=total_impressions,
+            max_reach_percent=max_reach_percent,
+            global_overlap_factor=global_overlap_factor,
+            channel_data=edited_df
+        )
         results = calculator.run_all_calculations()
         st.session_state.results = results
 
