@@ -3,14 +3,14 @@ import pandas as pd
 from reach_frequency_calculator import ReachFrequencyCalculator
 
 def create_gui():
-    st.set_page_config(layout="wide")  # Makes better use of screen space
+    st.set_page_config(layout="wide")  # Improves screen space usage
     
     # Title and tabs
     st.title("Reach & Frequency Calculator")
     tab1, tab2, tab3 = st.tabs(["Input Parameters", "Channel Distribution", "Results Dashboard"])
     
     with tab1:
-        # Basic and Advanced Parameters
+        # Basic Inputs
         st.header("Basic Inputs")
         col1, col2 = st.columns(2)
         
@@ -19,7 +19,7 @@ def create_gui():
                 "Total Universe", 
                 value=1_000_000,
                 min_value=1_000_000,
-                format="%d"  # Comma formatting
+                format="%d"  # Ensures comma formatting
             )
             
             total_impressions = st.number_input(
@@ -107,7 +107,7 @@ def create_gui():
                 for channel, contrib in results['channel_contributions'].items()
             ])
             
-            # Fix formatting error by ensuring numeric values before applying format
+            # Ensure "Contribution %" is numeric before applying formatting
             contrib_df["Contribution %"] = contrib_df["Contribution %"].str.replace('%', '').astype(float)
             st.dataframe(contrib_df.style.format({"Contribution %": "{:,.1f}%"}), hide_index=True)
             
@@ -127,6 +127,10 @@ def create_gui():
                 {"Frequency": freq, "Reach %": f"{reach:.1f}%"}
                 for freq, reach in results['effective_reach'].items()
             ])
+            
+            # Ensure "Reach %" is numeric before applying formatting
+            effective_df["Reach %"] = effective_df["Reach %"].str.replace('%', '').astype(float)
+            
             st.dataframe(effective_df.style.format({"Reach %": "{:,.1f}%"}), hide_index=True)
 
 if __name__ == "__main__":
